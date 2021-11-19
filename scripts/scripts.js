@@ -1,6 +1,7 @@
+       //Aqui ficam as variáveis globais que serão usadas nas funções
        let route = "home";
-       let numberOfQuestions = 0;
-       let numberOfLevels = 0;
+       let numberOfQuestions = null;
+       let numberOfLevels = null;
        let idQuizz = null;
 
        let quizz = {
@@ -10,7 +11,7 @@
         levels: []
        };
 
-
+       //Definição do component quizz(visual)
        const Quizz = (title, image, id) =>
        {
            return `<a href="${id}">
@@ -21,6 +22,7 @@
                    </a>`;
        }
 
+       //Função que lista todos os quizz e cria uma lista de componentes
         const getQuizzes = () =>
        {   
            axios.get("https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes")
@@ -36,6 +38,8 @@
                document.querySelector(".lista-quizz-todos ul").innerHTML = listaQuizzes;
            });
        }
+
+       //Função que renderiza um formulário de pergunta
        const addPerguntaForm = (number) =>
         {
             let form =  `<form class="form-perguntas">
@@ -63,6 +67,7 @@
                 container.insertAdjacentHTML("beforeend", form);
         }
 
+        //Função que renderiza um formulário de nível
         const addNivelForm = (number) =>
         {
             let form =  `<form class="form-niveis">
@@ -77,6 +82,20 @@
                 container.insertAdjacentHTML("beforeend", form);
         }
 
+        const resetQuizz = () =>
+        {
+            let numberOfQuestions = 0;
+            let numberOfLevels = 0;
+            let idQuizz = null;
+            let quizz = {
+            title: null,
+            image: null,
+            questions: [],
+            levels: []
+            };
+        }
+
+        //Função chamada ao submeter um formulário, mesmo se for de quizz, pergunta ou níveis
         const submit = () => 
         {
             let forms = document.querySelectorAll("form");
@@ -92,10 +111,10 @@
             {
                 if(route === "quizz")
                 {
-                    quizz.title = forms[0].elements["quizz-title"].value;
-                    quizz.image = forms[0].elements["url-image-quizz"].value;
-                    numberOfQuestions = forms[0].elements["number-asks-quizz"].value;
-                    numberOfLevels = forms[0].elements["number-levels-quizz"].value;
+                    quizz.title = forms[0].querySelector('input[name="quiz-title"]').value;
+                    quizz.image = forms[0].querySelector('input[name="url-image-quizz"]').value;
+                    numberOfQuestions = forms[0].querySelector('input[name="number-asks-quizz"]').value;
+                    numberOfLevels = forms[0].querySelector('input[name="number-levels-quizz"]').value;
                     route = "perguntas";
                     loadPage();
                 }
@@ -130,8 +149,7 @@
                             question.answers = answers;
                             quizz.questions.push(question);   
                     });
-                    route = "niveis";
-                    loadPage();
+                    redirect("niveis");
                 }
                 else if(route === "niveis")
                 {
@@ -145,20 +163,20 @@
                         };
                         quizz.levels.push(level);
                     });
-                     navigate("submit"); 
+                     redirect("submit"); 
                  }
             }
             else
             alert("Por favor preencha os dados corretamente");
         }
 
-        const redirectUser = (route) => 
+        const renderView = (route) => 
         {
             if(route === "home")
             return `
             <div class="lista-quizz-usuario">
                 <span>Você não criou nenhum quizz ainda :(</span>
-                <a onclick='navigate("quizz");'>Criar Quizz</a>
+                <a onclick='redirect("quizz");'>Criar Quizz</a>
             </div>
             <div class="lista-quizz-todos">
                 <h2>Todos os quizzes</h2>
@@ -200,11 +218,11 @@
             <span>${quizz.title}</span>
             </div>
             <a class="btn-acessar-quizz">Acessar quizz</a>
-            <a onclick='navigate("home");' class="btn-voltar-home">Voltar pra home</a>
+            <a onclick='redirect("home");' class="btn-voltar-home">Voltar pra home</a>
             `;
         }
 
-        const navigate = (routing) =>
+        const redirect = (routing) =>
         {
             route = `${routing}`;
             loadPage();
@@ -212,7 +230,7 @@
 
         const loadPage = () =>
         {
-            document.querySelector("main").innerHTML = redirectUser(route);
+            document.querySelector("main").innerHTML = renderView(route);
             if (route === "home")
             {
                 getQuizzes();
@@ -239,10 +257,12 @@
                         )
                         .then(response => {
                             idQuizz = response.data.id;
-                            navigate("success");
+                            redirect("success");
                         }).catch(error => {
                             console.log(JSON.stringify(quizz, null, 4));
                             alert("Houve um erro, recomece o processo");
+                            resetQuizz();
+                            redirect("quizz");
                         });
             }
             else if(route === "success")
@@ -250,7 +270,7 @@
                 axios.get(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${idQuizz}`)
                 .then(response => {
                     quizz = response.data;
-                    document.querySelector(".container").innerHTML = redirectUser(route);
+                    document.querySelector(".main").innerHTML = renderView(route);
                 }).catch(error => {
                 });
             }
