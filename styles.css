@@ -1,0 +1,365 @@
+*
+{
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    color: #000000;
+}
+
+ul
+{
+    list-style-type: none;
+}
+
+a{
+    text-decoration: none;
+    cursor: pointer;
+}
+
+main
+{
+    background-color: #E5E5E5;
+    min-height: 100vh;
+    padding-top: 69px;
+    padding-bottom: 69px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+}
+
+header 
+{
+    background-color: #EC362D;
+    height: 69px;
+    width: 100%;
+    position: fixed;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+header h1
+{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 37px;
+    line-height: 43px;
+    color: #FFFFFF;
+}
+
+h2
+{
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 23px;
+    line-height: 27px;
+    text-align: center;
+    margin-top: 140px;
+}
+
+.lista-quizz-usuario
+{
+    width: 1051px;
+    height: 181px;
+    background: #FAFAFA;
+    border: 1px dashed #D5D5D5;
+    border-radius: 5px;
+    margin-top: 77px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.lista-quizz-usuario span
+{
+    display: block;
+    width: 250px;
+    margin-top: 7px;
+    font-family: Roboto;
+    font-size: 20px;
+    line-height: 23px;
+    color: #B9B9B9;
+    text-align: center;
+}
+
+.lista-quizz-usuario a
+{
+    background: #FAFAFA;
+    border: 1px dashed #EC362D;
+    box-sizing: border-box;
+    border-radius: 50px;
+    font-family: Roboto;
+    font-size: 21px;
+    line-height: 25px;
+    color: #EC362D;
+    padding: 5px;
+    width: 151px;
+    height: 40px;
+    text-align: center;
+}
+
+.lista-quizz-todos
+{
+    width: 1051px;
+}
+
+.lista-quizz-todos h2
+{
+    font-family: Roboto;
+    font-style: normal;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    color: #000000;
+}
+
+.lista-quizz-todos ul
+{
+    margin-top: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.lista-quizz-todos ul li
+{
+    width: 340px;
+    height: 181px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(.png);
+    border-radius: 5px;
+    position: relative;
+    cursor: pointer;
+    
+}
+
+.lista-quizz-todos ul li img
+{
+    width: 100%;
+    height: 100%;
+    border-radius: inherit;
+}
+
+
+.lista-quizz-todos ul li span
+{
+    position: absolute;
+    width: 301px;
+    height: 54px;
+    left: 18px;
+    bottom: 7px;
+    font-family: Roboto;
+    font-size: 19px;
+    line-height: 22px;
+    color: #FFFFFF;
+    z-index: 1;
+}
+
+.lista-quizz-todos ul li::after
+{
+    content: "";
+    width: inherit;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%), url(.png);
+    bottom: 0px;
+    left:0px;
+    position: absolute;
+    border-radius: inherit;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+form
+{
+    margin: 0 auto;
+    margin-top: 26px;
+    width: 600px;
+    padding: 13px 20px 0px 16px;
+}
+
+form h3
+{
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    color: #000000;
+    margin-right: auto;
+    margin-bottom: 12px;
+    margin-top: 14px;
+}
+
+
+form input
+{
+    width: 100%;
+    height: 46px;
+    background: #FFFFFF;
+    border: 1px solid #D1D1D1;
+    border-radius: 5px;
+    outline: 0;
+    margin-bottom: 14px;
+}
+
+form input[type="submit"]
+{
+    width: 368.86px;
+    height: 54px;
+    margin-top: 109px;
+    background: #EC362D;
+    border-radius: 15px;
+    border: none;
+    font-family: Roboto;
+    font-size: 21px;
+    line-height: 25px;
+    color: #FFF5F4;
+    cursor: pointer;
+}
+
+.btn-acessar-quizz
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 220.32px;
+    height: 44px;
+    margin: 0 auto;
+    margin-top: 45px;
+    background: #EC362D;
+    border-radius: 15px;
+    border: none;
+    font-family: Roboto;
+    font-size: 21px;
+    line-height: 25px;
+    color: #FFF5F4;
+    cursor: pointer;
+}
+
+.btn-voltar-home
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Roboto;
+    font-size: 21px;
+    line-height: 25px;
+    margin: 0 auto;
+    margin-top: 9px;
+    color: #818181;
+    cursor: pointer;
+}
+
+input:invalid
+{
+    background-color: pink;
+}
+
+input:valid
+{
+    background-color: lightgreen;
+}
+
+.group
+{
+    width: 100%;
+    margin-bottom: 32px;
+}
+
+.add-pergunta
+{
+    display: flex;
+    align-items: center;
+    width: 601px;
+    height: 74px;
+    background-color: #FFFFFF;
+    margin: 0 auto;
+    margin-top: 24px;
+    padding-inline: 17px;
+}
+
+.add-pergunta span
+{
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+}
+
+.submit
+{
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 368.86px;
+    height: 54px;
+    margin-top: 80px;
+    background: #EC362D;
+    border-radius: 15px;
+    border: none;
+    font-family: Roboto;
+    font-size: 21px;
+    line-height: 25px;
+    color: #FFF5F4;
+    cursor: pointer;
+}
+
+.quizz-container
+{
+    position: relative;
+    width: 500px;
+    height: 266px;
+    margin: 0 auto;
+    margin-top: 46px;
+    border-radius: 5px;
+}
+
+.quizz-container::after
+{
+    content: "";
+    width: inherit;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 65.62%, rgba(0, 0, 0, 0.8) 100%), url(.png);
+    bottom: 0px;
+    left:0px;
+    position: absolute;
+    border-radius: inherit;
+}
+
+.quizz-container img
+{
+    height: 100%;
+    width: 100%;
+    border-radius: inherit;
+}
+
+.quizz-container span
+{
+    font-family: Roboto;
+    font-size: 23px;
+    line-height: 27px;
+    color: #FFFFFF;
+    position: relative;
+    left: 23px;
+    bottom: 50px;
+    z-index: 1;
+}
+
+
