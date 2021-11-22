@@ -29,6 +29,7 @@ main
     display: flex;
     align-items: center;
     flex-direction: column;
+    width: 100vw;
 }
 
 header 
@@ -67,6 +68,12 @@ h2
 
 /*CSS da home*/
 
+.quizz-todos span{
+    display: inline-block;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+ }
 
 .container-home
 {
@@ -256,23 +263,10 @@ h2
 form
 {
     margin: 0 auto;
-    margin-top: 26px;
+    margin-top: 12px;
     width: 600px;
     padding: 13px 20px 0px 16px;
 }
-
-form h3
-{
-    font-family: Roboto;
-    font-weight: bold;
-    font-size: 20px;
-    line-height: 23px;
-    color: #000000;
-    margin-right: auto;
-    margin-bottom: 12px;
-    margin-top: 14px;
-}
-
 
 form input
 {
@@ -284,6 +278,10 @@ form input
     outline: 0;
     margin-bottom: 14px;
 }
+
+form input:placeholder-shown {
+    font-style: italic;
+ }
 
 form input[type="submit"]
 {
@@ -298,6 +296,41 @@ form input[type="submit"]
     line-height: 25px;
     color: #FFF5F4;
     cursor: pointer;
+}
+
+.form-collapsible
+{
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  margin-top: 26px;
+}
+
+.collapsible
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: 13px 20px 13px 16px;
+    background-color: #FFFFFF;
+    border: 1px solid #D1D1D1;
+    margin-block: 14px;
+}
+
+.collapsible span 
+{
+    font-family: Roboto;
+    font-weight: bold;
+    font-size: 20px;
+    line-height: 23px;
+    color: #000000;
+}
+
+.collapsible ion-icon
+{
+    font-size: 20px;
+    stroke-width: 2px;
 }
 
 .btn-acessar-quizz
@@ -443,11 +476,23 @@ small
 .loading-overlay
 {
     position: fixed;
-    background-color: sandybrown;
+    background-color: #FFFFFF;
     height: 100%;
     width: 100%;
     top: 10px;
-    z-index: 1;
+    z-index: 995;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loading-overlay img
+{
+    height: 600px;
+}
+
+.loading-overlay.hidden
+{
     display: none;
 }
 
@@ -502,6 +547,11 @@ small
    color: #fff;
    z-index: 3;
    margin-top: 0;
+   display: inline-block;
+   white-space: wrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   margin: 5px;
 }
 
 .question-container{
@@ -528,6 +578,11 @@ small
    font-size: 23px;
    line-height: 27px;
    color: #fff;
+   display: inline-block;
+   white-space: wrap;
+   overflow: hidden;
+   text-overflow: ellipsis;
+   margin: 5px;
 }
 
 .quizz-question{
@@ -552,11 +607,15 @@ small
 }
 
 .answer-card h3{
+   width: 100%;
    margin-top: 7px;
    font-family: Roboto;
    font-weight: 700;
    font-size: 20px;
    line-height: 24px;
+   display: inline-block;
+   overflow: hidden;
+   text-overflow: ellipsis;
 }
 
 /* results */
@@ -570,7 +629,13 @@ small
 }
 
 .results-header{
-   width: 100%;
+    font-family: Roboto;
+    display: inline-block;
+    white-space: wrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 5px;
+    width: 100%;
    height:99px;
    display: flex;
    align-items: center;
@@ -595,11 +660,16 @@ small
 }
 
 .results-box h3{
-   width: 50%;
-   font-family: Roboto;
-   font-weight: 700;
-font-size: 19px;
-line-height: 25px;
+    width: 50%;
+    font-family: Roboto;
+    font-weight: 700;
+ font-size: 19px;
+ line-height: 25px;
+ display: inline-block;
+ white-space: wrap;
+ overflow: hidden;
+ text-overflow: ellipsis;
+ margin: 5px;
 }
 
 .btn-reiniciar{
@@ -656,6 +726,50 @@ line-height: 25px;
 
 @media (max-width:1000px){
 
+    html {
+        overflow: scroll;
+        overflow-x: hidden;
+    }
+    ::-webkit-scrollbar {
+        width: 0;  /* Remove scrollbar space */
+        background: transparent;  /* Optional: just make scrollbar invisible */
+    }
+
+    body.scroll-hidden
+{
+    overflow: hidden;
+}
+  
+  /* homepage */
+  
+  .container-home
+  {
+      width: 100%;
+      padding-top: 29px;
+      margin-top: 70px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+  }
+  
+  .container-home .painel-usuario
+  {
+      margin-bottom: 20px;
+  }
+  
+  .container-home ul
+  {
+      display: flex;
+      flex-wrap: wrap;
+      flex-direction: column;
+  }
+  
+  .container-home ul li span
+  {
+      width: 301px;
+      height: 27px;
+  }
+  
 .quizz-header{
    width: 100vw;
    height: 142px;
@@ -754,12 +868,79 @@ line-height: 25px;
    height: 44px;
    font-size: 18px;
    margin-bottom: 8px;
-   margin-top: 34px;
+   margin-top: 18px;
 }
 
 
 .btn-home{
    font-size: 18px;
    margin-bottom: 66px;
+}
+
+/* input */
+
+form
+{
+    margin-top: 13px;
+    width: 100%;
+    padding: 6px 10px 0px 8px;
+}
+
+form h3
+{
+    margin-bottom: 6px;
+    margin-top: 7px;
+}
+
+
+form input
+{
+    width: 100%;
+    height: 46px;
+    margin: 9px auto;
+    padding: 2px;
+}
+
+form input[type="submit"]
+{
+    width: 100%;
+    height: 46px;
+    margin-top: 50px;
+}
+
+.btn-acessar-quizz
+{
+    height: 34px;
+    margin-top: 20px;
+}
+.group
+{
+    margin-bottom: 16px;
+}
+
+.add-pergunta
+{
+    width: 100%;
+    height: 33px;
+    margin-top: 12px;
+    padding-inline: 10px;
+}
+
+.submit
+{
+    width: 90%;
+    height: 40px;
+    margin: 40px auto;
+}
+
+.submit a{
+   font-size: 12px;
+}
+
+.quizz-template
+{
+    width: 100%;
+    height: 266px;
+    margin-top: 23px;
 }
 }

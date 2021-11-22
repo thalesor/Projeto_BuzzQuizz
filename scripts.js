@@ -7,6 +7,7 @@
     }
     else
     quizzesUsuario = JSON.parse(localStorage.getItem("quizzesUsuario"));
+
        //Aqui ficam as variáveis globais que serão usadas nas funções
        let route = "home";
        let quantidadePerguntasForm = null;
@@ -51,7 +52,7 @@
                })
                .join("");
                document.querySelector(".quizz-usuario").innerHTML = listaQuizzes;
-           });
+           }).finally(() => turnOverlay("remove"));
        }
 
         const getQuizzes = () =>
@@ -67,14 +68,17 @@
                })
                .join("");
                document.querySelector(".quizz-todos").innerHTML = listaQuizzes;
-           });
+           }).finally(() => turnOverlay("remove"));
        }
 
        //Função que renderiza um formulário de pergunta
        const renderPerguntaForm = (number) =>
         {
-            let form =  `<form class="form-perguntas">
-            <h3>Pergunta ${number}</h3>
+            let form =  `
+            <a class="collapsible">
+            <span>Pergunta ${number}</span><ion-icon name="create-outline">
+            </a>
+            <form class="form-collapsible">
             <input oninvalid="validarInput(this);" type="text" minlength="20" placeholder="     Texto da pergunta" class="pergunta-texto" required />
             <small class="hidden">O campo texto da pergunta não pode ser vazio e deve ter um número de caracteres a partir de 20</small>
 
@@ -110,8 +114,11 @@
         //Função que renderiza um formulário de nível
         const renderNivelForm = (number) =>
         {
-            let form =  `<form class="form-niveis">
-            <h3>Nivel ${number}</h3>
+            let form =  `
+            <a class="collapsible">
+            <span>Nível ${number}</span><ion-icon name="create-outline">
+            </a>
+            <form class="form-collapsible">
             <input oninvalid="validarInput(this);" type="text" minlength="10" placeholder="     Título do nível" class="titulo-nivel" required />
             <small class="hidden">O campo título do nível não pode ser vazio e deve ter um número de caracteres a partir de 10</small>
 
@@ -264,7 +271,7 @@
             else if(route === "quizz")
             return `
             <h2>Comece pelo começo</h2>
-            <form class="form-perguntas" novalidate>
+            <form novalidate>
                 
                 <input type="text" minlength="20" oninvalid="validarInput(this);" onchange=xixi(this) maxlength="65" placeholder="      Título do quizz" class="quizz-title" required />
                 <small class="hidden">O campo título do quizz não pode ser vazio e deve ter um número de caracteres entre 20 e 65</small>
@@ -325,8 +332,18 @@
             loadPage();
         }
 
+        const turnOverlay = (action) =>
+        {
+          let modal = document.querySelector(".loading-overlay");
+          if(action === "add")
+          modal.classList.remove("hidden")
+          else if(action === "remove")
+          modal.classList.add("hidden");
+        }
+
         const loadPage = () =>
         {
+            turnOverlay("add");
             if(route === "selectedQuizz")
             document.body.classList.add("scroll-hidden");
             else
@@ -341,18 +358,23 @@
                 getQuizzesUsuario();
                 getQuizzes();
             }
+            else if(route === "quizz")
+            turnOverlay("remove");
             else if(route === "perguntas")
             {
                 for(let i = 0; i < quantidadePerguntasForm; i++)
                 renderPerguntaForm(i); 
+                turnOverlay("remove");
             }
             else if(route === "niveis")
             {
                 for(let i = 0; i < quantidadeNiveisForm; i++)
                 renderNivelForm(i);
+                turnOverlay("remove");
             }
             else if(route === "submit")
             {
+              turnOverlay("add");
                 axios.post('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes', 
                 {
                     title: quizz.title,
@@ -371,7 +393,7 @@
                     alert("Houve um erro, recomece o processo");
                     resetQuizz();
                     redirect("quizz");
-                });
+                }).finally(() => turnOverlay("remove"));
             }
             //Função baseada no que o Pedro criou
             else if(route === "selectedQuizz")
@@ -381,7 +403,24 @@
                 .then((response) => {
                   renderQuizz(response);
                   checkAnswer(response);
+                }).finally(() => turnOverlay("remove"));
+            }
+
+
+            let formCollapsibles = document.getElementsByClassName("collapsible");
+            if(formCollapsibles)
+            {
+              formCollapsibles = Array.from(formCollapsibles);
+              formCollapsibles.forEach(collapsible => {
+                collapsible.addEventListener("click", function() {
+                  let contentInside = this.nextElementSibling;
+                  if (contentInside.style.maxHeight){
+                    contentInside.style.maxHeight = null;
+                  } else {
+                    contentInside.style.maxHeight = contentInside.scrollHeight + "px";
+                  } 
                 });
+                 });
             }
         }
 
@@ -530,7 +569,7 @@
            <button class="btn-reiniciar" onclick="getQuizz(${quizzId})">Reiniciar Quizz</button>
            <button class="btn-home" onclick=redirect("home")>Voltar para home</button>
            `;
-            });
+            }).finally(() => turnOverlay("remove"));
           setTimeout(() => {
             document
               .querySelector(".results-container")
