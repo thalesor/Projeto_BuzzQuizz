@@ -12,7 +12,7 @@
        let route = "home";
        let quantidadePerguntasForm = null;
        let quantidadeNiveisForm = null;
-
+       let quizzId;
        
        let quizz = {
         title: null,
@@ -261,7 +261,6 @@
             <h2>Crie suas perguntas</h2>
             <div class="container-perguntas">
             </div>
-            <a class="add-pergunta" href="#" onclick="renderPerguntaForm()" ><span>Pergunta</span></a>
             <a class="submit" onclick="submit()">Prosseguir pra criar níveis</a>
         `;
         else if(route === "niveis")
@@ -278,7 +277,7 @@
             <img src="${quizz.image}">
             <span>${quizz.title}</span>
             </div>
-            <a class="btn-acessar-quizz">Acessar quizz</a>
+            <a onclick=getQuizz(${quizzId}) class="btn-acessar-quizz">Acessar quizz</a>
             <a onclick='redirect("home");' class="btn-voltar-home">Voltar pra home</a>
             `;
             //VIEW CRIADA PARA ADAPTAR O CODIGO DO PEDRO
@@ -334,6 +333,7 @@
                 }
                 )
                 .then(response => {
+                    quizzId = response.data.id;
                     guardaStorage(response.data.id);
                     redirect("success");
                 }).catch(error => {
@@ -365,7 +365,7 @@
         let score = 0;
         let scrollToNext = 0;
 
-        let quizzId;
+        
 
        
         function getQuizz(idQuizz) {
