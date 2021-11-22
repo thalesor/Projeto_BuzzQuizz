@@ -1,9 +1,19 @@
+
+    let quizzesUsuario;
+    if(!localStorage.getItem("quizzesUsuario"))
+    {
+        let quizzesUsuario = [];
+        localStorage.setItem("quizzesUsuario", JSON.stringify(quizzesUsuario));
+    }
+    else
+    quizzesUsuario = JSON.parse(localStorage.getItem("quizzesUsuario"));
+       
        //Aqui ficam as variáveis globais que serão usadas nas funções
        let route = "home";
-       let numberOfQuestions = null;
-       let numberOfLevels = null;
-       let idQuizz = null;
+       let quantidadePerguntasForm = null;
+       let quantidadeNiveisForm = null;
 
+       
        let quizz = {
         title: null,
         image: null,
@@ -11,56 +21,78 @@
         levels: []
        };
 
-       //Definição do component quizz(visual)
+       //Definição do componente quizz(visual)
        const Quizz = (title, image, id) =>
        {
-           return `<a href="${id}">
-                       <li class="quizz">
-                           <img src="${image}">
-                           <span>${title}</span>
-                       </li>
-                   </a>`;
+           
+            let quizzBody = `<a href="${id}">
+            <li class="quizz">
+            <div class="buttons">
+            <div class="btn-edit-quizz"><ion-icon name="create-outline"></ion-icon></div>
+            <div class="btn-remove-quizz"><ion-icon name="trash-outline"></ion-icon></div>
+        </div>
+                <img src="${image}">
+                <span>${title}</span>
+            </li>
+        </a>`;
+
+           return quizzBody;
        }
 
-       //Função que lista todos os quizz e cria uma lista de componentes
+       const getQuizzesUsuario = () =>
+       {   
+           axios.get("https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes")
+           .then(response  => 
+           {
+               const quizzes = response.data;
+               const listaQuizzes = quizzes.map((quizz) => 
+               {
+                   if(quizzesUsuario.includes(quizz.id))
+                  return Quizz(quizz.title, quizz.image, quizz.id); 
+               })
+               .join("");
+               document.querySelector(".container-home .quizz-usuario").innerHTML = listaQuizzes;
+           });
+       }
+
         const getQuizzes = () =>
        {   
            axios.get("https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes")
            .then(response  => 
            {
                const quizzes = response.data;
-               console.log(quizzes);
                const listaQuizzes = quizzes.map((quizz) => 
                {
-                  return Quizz(quizz.title, quizz.image, quizz.id); 
+                    if(!quizzesUsuario.includes(quizz.id))
+                  return Quizz(quizz.title, quizz.image, quizz.id);  
                })
                .join("");
-               document.querySelector(".lista-quizz-todos ul").innerHTML = listaQuizzes;
+               document.querySelector(".container-home .quizz-todos").innerHTML = listaQuizzes;
            });
        }
 
        //Função que renderiza um formulário de pergunta
-       const addPerguntaForm = (number) =>
+       const renderPerguntaForm = (number) =>
         {
             let form =  `<form class="form-perguntas">
             <h3>Pergunta ${number}</h3>
-            <input type="text" minlength="20" placeholder="     Texto da pergunta" name="pergunta-texto" onchange="return;" required />
-            <input type="text" placeholder="     A Cor de fundo da pergunta" name="pergunta-cor" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" required />
+            <input type="text" minlength="20" placeholder="     Texto da pergunta" class="pergunta-texto" onchange="return;" required />
+            <input type="text" placeholder="     A Cor de fundo da pergunta" class="pergunta-cor" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" required />
             <h3>Resposta correta</h3>
-            <input type="text" placeholder="     Resposta correta " name="resposta-correta" required/>
-            <input type="url" placeholder="     URL da imagem" name="url-imagem-correta" required/>
+            <input type="text" placeholder="     Resposta correta " class="resposta-correta" required/>
+            <input type="url" placeholder="     URL da imagem" class="url-imagem-correta" required/>
             <h3>Respostas incorretas</h3>
             <div class="group">
-            <input type="text" placeholder="     Resposta incorreta 1" name="resposta-incorreta-1" required />
-            <input type="url" placeholder="     URL da imagem 1" name="url-imagem-incorreta-1" required/>
+            <input type="text" placeholder="     Resposta incorreta 1" class="resposta-incorreta-1" required />
+            <input type="url" placeholder="     URL da imagem 1" class="url-imagem-incorreta-1" required/>
             </div>
             <div class="group">
-            <input type="text" placeholder="     Resposta incorreta 2" name="resposta-incorreta-2" required/>
-            <input type="url" placeholder="     URL da imagem 2" name="url-imagem-incorreta-2" required/>
+            <input type="text" placeholder="     Resposta incorreta 2" class="resposta-incorreta-2"/>
+            <input type="url" placeholder="     URL da imagem 2" class="url-imagem-incorreta-2"/>
             </div>
             <div class="group">
-            <input type="text" placeholder="     Resposta incorreta 3" name="resposta-incorreta-3" required/>
-            <input type="url" placeholder="     URL da imagem 3" name="url-imagem-incorreta-3" required/>
+            <input type="text" placeholder="     Resposta incorreta 3" class="resposta-incorreta-3"/>
+            <input type="url" placeholder="     URL da imagem 3" class="url-imagem-incorreta-3"/>
             </div>
             </form>`;
                 let container =  document.querySelector(".container-perguntas");
@@ -68,14 +100,14 @@
         }
 
         //Função que renderiza um formulário de nível
-        const addNivelForm = (number) =>
+        const renderNivelForm = (number) =>
         {
             let form =  `<form class="form-niveis">
             <h3>Nivel ${number}</h3>
-            <input type="text" minlength="10" placeholder="     Título do nível" name="titulo-nivel" required />
-            <input type="number" placeholder="     % de acerto mínima" min="0" max="100" name="acerto-nivel" required />
-            <input type="url" placeholder="     URL da imagem do seu quizz" name="url-imagem-nivel" required />
-            <input type="text" minlength="30" placeholder="     Descrição do nível" name="descricao-nivel" required />
+            <input type="text" minlength="10" placeholder="     Título do nível" class="titulo-nivel" required />
+            <input type="number" placeholder="     % de acerto mínima" min="0" max="100" class="acerto-nivel" required />
+            <input type="url" placeholder="     URL da imagem do seu quizz" class="url-imagem-nivel" required />
+            <input type="text" minlength="30" placeholder="     Descrição do nível" class="descricao-nivel" required />
             </div>
             </form>`;
                 let container =  document.querySelector(".container-niveis");
@@ -84,8 +116,8 @@
 
         const resetQuizz = () =>
         {
-            let numberOfQuestions = 0;
-            let numberOfLevels = 0;
+            let quantidadePerguntasForm = 0;
+            let quantidadeNiveisForm = 0;
             let idQuizz = null;
             let quizz = {
             title: null,
@@ -94,6 +126,14 @@
             levels: []
             };
         }
+
+        const guardaStorage = (idQuizz) =>
+        {
+            quizzesUsuario = JSON.parse(localStorage.getItem("quizzesUsuario"));
+            quizzesUsuario.push(idQuizz);
+            localStorage.setItem("quizzesUsuario", JSON.stringify(quizzesUsuario));
+        }
+
 
         //Função chamada ao submeter um formulário, mesmo se for de quizz, pergunta ou níveis
         const submit = () => 
@@ -111,26 +151,25 @@
             {
                 if(route === "quizz")
                 {
-                    quizz.title = forms[0].querySelector('input[name="quiz-title"]').value;
-                    quizz.image = forms[0].querySelector('input[name="url-image-quizz"]').value;
-                    numberOfQuestions = forms[0].querySelector('input[name="number-asks-quizz"]').value;
-                    numberOfLevels = forms[0].querySelector('input[name="number-levels-quizz"]').value;
-                    route = "perguntas";
-                    loadPage();
+                    quizz.title = forms[0].querySelector('.quizz-title').value;
+                    quizz.image = forms[0].querySelector('.url-image-quizz').value;
+                    quantidadePerguntasForm = forms[0].querySelector('.number-asks-quizz').value;
+                    quantidadeNiveisForm = forms[0].querySelector('.number-levels-quizz').value;
+                    redirect("perguntas");
                 }
                 else if(route === "perguntas")
                 {
                     forms.forEach(f => {
                         let question = {
-                            title: f.querySelector('input[name="pergunta-texto"]').value,
-                            color: f.querySelector('input[name="pergunta-cor"]').value,
+                            title: f.querySelector('.pergunta-texto').value,
+                            color: f.querySelector('.pergunta-cor').value,
                             answers: null
                         };
                         let answers = [];
                         answers.push(
                             {
-                                text: f.querySelector('input[name="resposta-correta"]').value,
-                                image: f.querySelector('input[name="url-imagem-correta"]').value,
+                                text: f.querySelector('.resposta-correta').value,
+                                image: f.querySelector('.url-imagem-correta').value,
                                 isCorrectAnswer: true
                             });
                             
@@ -138,12 +177,17 @@
                             respostasIncorretas = Array.from(respostasIncorretas);
                             respostasIncorretas.forEach(resposta => 
                             {
+                                let textoIncorreto = resposta.querySelector('input[type="text"]').value;
+                                let imagemIncorreta = resposta.querySelector('input[type="url"]').value;
+                                if(textoIncorreto !== "" && imagemIncorreta != "")
+                                {
                                     answers.push(
                                         {
-                                            text: resposta.querySelector('input[type="text"]').value,
-                                            image: resposta.querySelector('input[type="url"]').value,
+                                            text: textoIncorreto,
+                                            image: imagemIncorreta,
                                             isCorrectAnswer: false
                                         });
+                                }    
                             });
 
                             question.answers = answers;
@@ -156,10 +200,10 @@
                     
                     forms.forEach(f => {
                         let level = {
-                            title: f.querySelector('input[name="titulo-nivel"]').value,
-                            image: f.querySelector('input[name="url-imagem-nivel"]').value,
-                            text: f.querySelector('input[name="descricao-nivel"]').value,
-                            minValue: f.querySelector('input[name="acerto-nivel"]').value
+                            title: f.querySelector('.titulo-nivel').value,
+                            image: f.querySelector('.url-imagem-nivel').value,
+                            text: f.querySelector('.descricao-nivel').value,
+                            minValue: f.querySelector('.acerto-nivel').value
                         };
                         quizz.levels.push(level);
                     });
@@ -173,25 +217,42 @@
         const renderView = (route) => 
         {
             if(route === "home")
-            return `
-            <div class="lista-quizz-usuario">
-                <span>Você não criou nenhum quizz ainda :(</span>
-                <a onclick='redirect("quizz");'>Criar Quizz</a>
+            {
+               let viewUsuario;
+                if(quizzesUsuario.length)
+                viewUsuario = `
+                <div class="flex">
+                    <h1>Seus quizzes</h1>
+                    <a onclick='redirect("quizz");'><ion-icon name="add-circle"></ion-icon>
+                    </a>
+                </div>
+                <ul class="quizz-usuario"></ul>
+                `;
+                else
+                viewUsuario = `
+                <div class="painel-usuario">
+                    <span>Você não criou nenhum quizz ainda :(</span>
+                    <a onclick='redirect("quizz");'><p>Criar Quizz</p></a>
+                </div>
+                `;
+
+                return `
+                <div class="container-home">
+                ${viewUsuario}
+                <h1>Todos os quizzes</h1>
+                <ul class="quizz-todos"></ul>
             </div>
-            <div class="lista-quizz-todos">
-                <h2>Todos os quizzes</h2>
-                <ul></ul>
-            </div>
-            `;
+                `;
+            }
             else if(route === "quizz")
             return `
             <h2>Comece pelo começo</h2>
             <form class="form-perguntas">
                 <h3>Pergunta</h3>
-                <input type="text" minlength="20" maxlength="65" placeholder="     Título do quizz" name="quizz-title" required />
-                <input type="url" placeholder="     URL da imagem do seu quizz" name="url-image-quizz" required />
-                <input type="number" placeholder="     Quantidade de perguntas do quizz" min="3" name="number-asks-quizz" required />
-                <input type="number" placeholder="     Quantidade de níveis do quizz" min="2" name="number-levels-quizz" required />
+                <input type="text" minlength="20" maxlength="65" placeholder="     Título do quizz" class="quizz-title" required />
+                <input type="url" placeholder="     URL da imagem do seu quizz" class="url-image-quizz" required />
+                <input type="number" placeholder="     Quantidade de perguntas do quizz" min="3" class="number-asks-quizz" required />
+                <input type="number" placeholder="     Quantidade de níveis do quizz" min="2" class="number-levels-quizz" required />
             </form>
             <a class="submit" onclick="submit()">Prosseguir pra criar perguntas</a>
             `;
@@ -200,7 +261,7 @@
             <h2>Crie suas perguntas</h2>
             <div class="container-perguntas">
             </div>
-            <a class="add-pergunta" href="#" onclick="addPerguntaForm()" ><span>Pergunta</span></a>
+            <a class="add-pergunta" href="#" onclick="renderPerguntaForm()" ><span>Pergunta</span></a>
             <a class="submit" onclick="submit()">Prosseguir pra criar níveis</a>
         `;
         else if(route === "niveis")
@@ -213,13 +274,22 @@
             else if(route === "success")
             return `
             <h2>Seu quizz está pronto!</h2>
-            <div class="quizz-container">
+            <div class="quizz-template">
             <img src="${quizz.image}">
             <span>${quizz.title}</span>
             </div>
             <a class="btn-acessar-quizz">Acessar quizz</a>
             <a onclick='redirect("home");' class="btn-voltar-home">Voltar pra home</a>
             `;
+            //VIEW CRIADA PARA ADAPTAR O CODIGO DO PEDRO
+            else if(route === "selectedQuizz")
+            return `<div class="quizz-container">
+          <div class="quizz-header">
+            <div></div>
+            <h2></h2>
+          </div>
+          <ul></ul>
+        </div>`;
         }
 
         const redirect = (routing) =>
@@ -230,55 +300,219 @@
 
         const loadPage = () =>
         {
+            if(route === "selectedQuizz")
+            document.body.classList.add("scroll-hidden");
+            else
+                document.body.classList.remove("scroll-hidden");
+
+            //Primeiro, carrega a view solicitada
             document.querySelector("main").innerHTML = renderView(route);
+            //A seguir, adiciona a lógica pertence àquela view
             if (route === "home")
             {
+                getQuizzesUsuario();
                 getQuizzes();
             }
             else if(route === "perguntas")
             {
-                for(let i = 0; i < numberOfQuestions; i++)
-                addPerguntaForm(i); 
+                for(let i = 0; i < quantidadePerguntasForm; i++)
+                renderPerguntaForm(i); 
             }
             else if(route === "niveis")
             {
-                for(let i = 0; i < numberOfLevels; i++)
-                addNivelForm(i);
+                for(let i = 0; i < quantidadeNiveisForm; i++)
+                renderNivelForm(i);
             }
             else if(route === "submit")
             {
                 axios.post('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes', 
-                        {
-                            title: quizz.title,
-                            image: quizz.image,
-                            questions: quizz.questions,
-                            levels: quizz.levels
-                        }
-                        )
-                        .then(response => {
-                            idQuizz = response.data.id;
-                            redirect("success");
-                        }).catch(error => {
-                            console.log(JSON.stringify(quizz, null, 4));
-                            alert("Houve um erro, recomece o processo");
-                            resetQuizz();
-                            redirect("quizz");
-                        });
-            }
-            else if(route === "success")
-            {
-                axios.get(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${idQuizz}`)
+                {
+                    title: quizz.title,
+                    image: quizz.image,
+                    questions: quizz.questions,
+                    levels: quizz.levels
+                }
+                )
                 .then(response => {
-                    quizz = response.data;
-                    document.querySelector(".main").innerHTML = renderView(route);
+                    guardaStorage(response.data.id);
+                    redirect("success");
                 }).catch(error => {
+                    //mostra o objeto quizz no console log para comparação de erro
+                    console.log(JSON.stringify(quizz, null, 4));
+                    alert("Houve um erro, recomece o processo");
+                    resetQuizz();
+                    redirect("quizz");
+                });
+            }
+            //Função baseada no que o Pedro criou
+            else if(route === "selectedQuizz")
+            {
+                axios
+                .get(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${quizzId}`)
+                .then((response) => {
+                  renderQuizz(response);
+                  checkAnswer(response);
                 });
             }
         }
 
-        loadPage();
 
-      
+        //A SEGUIR, CÓDIGO CRIADO PELO PEDRO
 
-        
-         
+        let correctAnswers = 0;
+        let numberOfQuestions = 0;
+        let answered = 0;
+        let score = 0;
+        let scrollToNext = 0;
+
+        let quizzId;
+
+       
+        function getQuizz(idQuizz) {
+            correctAnswers = 0
+               numberOfQuestions = 0
+               answered = 0;
+               score = 0;
+               scrollToNext= 0;
+            quizzId = idQuizz;
+            redirect("selectedQuizz");
+        }
+
+        function shuffle(sourceArray) {
+          for (var i = 0; i < sourceArray.length - 1; i++) {
+            var j = i + Math.floor(Math.random() * (sourceArray.length - i));
+
+            var temp = sourceArray[j];
+            sourceArray[j] = sourceArray[i];
+            sourceArray[i] = temp;
+          }
+          return sourceArray;
+        }
+
+        function renderQuizz(quizz) {
+          let title = document.querySelector(".quizz-header h2");
+          title.innerHTML = quizz.data.title;
+
+          let titleImg = document.querySelector(".quizz-header");
+          titleImg.style.backgroundImage = `url(${quizz.data.image}`;
+
+          let quizzContainer = document.querySelector(".quizz-container ul");
+
+          let questions = quizz.data.questions;
+          numberOfQuestions = questions.length;
+
+          for (i = 0; i < questions.length; i++) {
+            quizzContainer.innerHTML += `<li class="question-container"></li>`;
+          }
+
+          let quizzList = document.querySelectorAll(".quizz-container ul li");
+
+          for (i = 0; i < questions.length; i++) {
+            quizzList[i].innerHTML += `
+                 <div class="question-header" style="background-color:${questions[i].color}">
+                    <h3>${questions[i].title}</h3>
+                 </div>
+                 <div class="quizz-question""></div>
+              `;
+          }
+
+          let quizzQuestion = document.querySelectorAll(".quizz-question");
+
+          for (i = 0; i < questions.length; i++) {
+            let answers = questions[i].answers;
+            shuffle(answers);
+
+            for (j = 0; j < answers.length; j++) {
+              quizzQuestion[i].innerHTML += `                     
+                 <div class="answer-card" onclick=checkAnswer(this)>
+                    <img src="${answers[j].image}" alt="${answers[j].text}">
+                    <h3 class="curtain ${answers[j].isCorrectAnswer}">${answers[j].text}</h3>
+                 </div>`;
+            }
+          }
+        }
+
+        function checkAnswer(answerCard) {
+          if (answerCard.querySelector("h3").classList.contains("true")) {
+            correctAnswers++;
+          }
+
+          answerCard.classList.add("selected");
+          answered++;
+
+          const children = answerCard.parentElement.children;
+
+          for (i = 0; i < children.length; i++) {
+            children[i].querySelector("h3").classList.remove("curtain");
+
+            if (!children[i].classList.contains("selected")) {
+              children[i].classList.add("not-selected");
+            }
+          }
+          score = (correctAnswers / numberOfQuestions) * 100;
+
+          if (answered == numberOfQuestions) {
+            quizzResults();
+          }
+
+          for (
+            i = 0;
+            i < answerCard.parentNode.parentNode.parentNode.children.length - 1;
+            i++
+          ) {
+            scrollToNext++;
+            setTimeout(() => {
+              answerCard.parentNode.parentNode.parentNode.children[
+                scrollToNext
+              ].scrollIntoView({ behavior: "smooth", block: "center" });
+            }, 2000);
+            return;
+          }
+        }
+
+        function quizzResults() {
+          axios
+            .get(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${quizzId}`)
+            .then((response) => {
+              let quizzContainer = document.querySelector(".quizz-container");
+              let levels = response.data.levels;
+              let text;
+              let title;
+              let image;
+              score = Math.round(score);
+
+              for (i = 0; i < levels.length; i++) {
+                if (score >= levels[i].minValue) {
+                  text = levels[i].text;
+                  title = levels[i].title;
+                  image = levels[i].image;
+                }
+              }
+              quizzContainer.innerHTML += `<div class="results-container">
+              <div class="results-header">
+                 <h3>${score}% de acerto: ${title} </h3>
+              </div>
+              <div class="results-box">                     
+                 <img src=${image} alt=${title}>
+                 <h3>${text}</h3>
+              </div>
+           </div>
+                 
+           <button class="btn-reiniciar" onclick="getQuizz(${quizzId})">Reiniciar Quizz</button>
+           <button class="btn-home" onclick=redirect("home")>Voltar para home</button>
+           `;
+            });
+          setTimeout(() => {
+            document
+              .querySelector(".results-container")
+              .scrollIntoView({ behavior: "smooth" });
+          }, 2000);
+        }
+
+
+
+
+                loadPage();
+
+                
+                 
