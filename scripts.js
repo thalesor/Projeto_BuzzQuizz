@@ -7,7 +7,6 @@
     }
     else
     quizzesUsuario = JSON.parse(localStorage.getItem("quizzesUsuario"));
-       
        //Aqui ficam as variáveis globais que serão usadas nas funções
        let route = "home";
        let quantidadePerguntasForm = null;
@@ -51,7 +50,7 @@
                   return Quizz(quizz.title, quizz.image, quizz.id); 
                })
                .join("");
-               document.querySelector(".container-home .quizz-usuario").innerHTML = listaQuizzes;
+               document.querySelector(".quizz-usuario").innerHTML = listaQuizzes;
            });
        }
 
@@ -67,7 +66,7 @@
                   return Quizz(quizz.title, quizz.image, quizz.id);  
                })
                .join("");
-               document.querySelector(".container-home .quizz-todos").innerHTML = listaQuizzes;
+               document.querySelector(".quizz-todos").innerHTML = listaQuizzes;
            });
        }
 
@@ -76,15 +75,24 @@
         {
             let form =  `<form class="form-perguntas">
             <h3>Pergunta ${number}</h3>
-            <input type="text" minlength="20" placeholder="     Texto da pergunta" class="pergunta-texto" onchange="return;" required />
-            <input type="text" placeholder="     A Cor de fundo da pergunta" class="pergunta-cor" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" required />
+            <input oninvalid="validarInput(this);" type="text" minlength="20" placeholder="     Texto da pergunta" class="pergunta-texto" required />
+            <small class="hidden">O campo texto da pergunta não pode ser vazio e deve ter um número de caracteres a partir de 20</small>
+
+            <input oninvalid="validarInput(this);" type="text" placeholder="     A Cor de fundo da pergunta" class="pergunta-cor" pattern="^#+([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$" required />
+            <small class="hidden">O campo cor de fundo da pergunta deve ser um hexadecimal válido</small>
             <h3>Resposta correta</h3>
-            <input type="text" placeholder="     Resposta correta " class="resposta-correta" required/>
-            <input type="url" placeholder="     URL da imagem" class="url-imagem-correta" required/>
+            <input oninvalid="validarInput(this);" type="text" placeholder="     Resposta correta " class="resposta-correta" required/>
+            <small class="hidden">O campo da resposta correta não pode ficar vazio</small>
+            
+            <input oninvalid="validarInput(this);" type="url" placeholder="     URL da imagem" class="url-imagem-correta" required/>
+            <small class="hidden">O campo imagem da resposta correta deve ser uma URL válida</small>
             <h3>Respostas incorretas</h3>
             <div class="group">
-            <input type="text" placeholder="     Resposta incorreta 1" class="resposta-incorreta-1" required />
-            <input type="url" placeholder="     URL da imagem 1" class="url-imagem-incorreta-1" required/>
+            <input oninvalid="validarInput(this);" type="text" placeholder="     Resposta incorreta 1" class="resposta-incorreta-1" required />
+            <small class="hidden">Pelo menos uma resposta incorreta deve ser adicionada</small>
+
+            <input oninvalid="validarInput(this);" type="url" placeholder="     URL da imagem 1" class="url-imagem-incorreta-1" required/>
+            <small class="hidden">Pelo menos a imagem de uma resposta incorreta deve ser uma URL válida</small>
             </div>
             <div class="group">
             <input type="text" placeholder="     Resposta incorreta 2" class="resposta-incorreta-2"/>
@@ -104,10 +112,17 @@
         {
             let form =  `<form class="form-niveis">
             <h3>Nivel ${number}</h3>
-            <input type="text" minlength="10" placeholder="     Título do nível" class="titulo-nivel" required />
-            <input type="number" placeholder="     % de acerto mínima" min="0" max="100" class="acerto-nivel" required />
-            <input type="url" placeholder="     URL da imagem do seu quizz" class="url-imagem-nivel" required />
-            <input type="text" minlength="30" placeholder="     Descrição do nível" class="descricao-nivel" required />
+            <input oninvalid="validarInput(this);" type="text" minlength="10" placeholder="     Título do nível" class="titulo-nivel" required />
+            <small class="hidden">O campo título do nível não pode ser vazio e deve ter um número de caracteres a partir de 10</small>
+
+            <input oninvalid="validarInput(this);" type="number" placeholder="     % de acerto mínima" min="0" max="100" class="acerto-nivel" required />
+            <small class="hidden">O campo da porcentagem de acerto mínima não pode ser vazio</small>
+
+            <input oninvalid="validarInput(this);" type="url" placeholder="     URL da imagem do seu quizz" class="url-imagem-nivel" required />
+            <small class="hidden">O campo da imagem do nível deve ser uma URL válida</small>
+
+            <input oninvalid="validarInput(this);" type="text" minlength="30" placeholder="     Descrição do nível" class="descricao-nivel" required />
+            <small class="hidden">O campo descrição do nível não pode ser vazio e deve ter um número de caracteres a partir de 30</small>
             </div>
             </form>`;
                 let container =  document.querySelector(".container-niveis");
@@ -133,7 +148,11 @@
             quizzesUsuario.push(idQuizz);
             localStorage.setItem("quizzesUsuario", JSON.stringify(quizzesUsuario));
         }
-
+       
+        const validarInput = (elemento) => 
+        {
+          elemento.nextElementSibling.classList.remove("hidden");
+        }
 
         //Função chamada ao submeter um formulário, mesmo se for de quizz, pergunta ou níveis
         const submit = () => 
@@ -210,8 +229,6 @@
                      redirect("submit"); 
                  }
             }
-            else
-            alert("Por favor preencha os dados corretamente");
         }
 
         const renderView = (route) => 
@@ -247,12 +264,23 @@
             else if(route === "quizz")
             return `
             <h2>Comece pelo começo</h2>
-            <form class="form-perguntas">
-                <h3>Pergunta</h3>
-                <input type="text" minlength="20" maxlength="65" placeholder="     Título do quizz" class="quizz-title" required />
-                <input type="url" placeholder="     URL da imagem do seu quizz" class="url-image-quizz" required />
-                <input type="number" placeholder="     Quantidade de perguntas do quizz" min="3" class="number-asks-quizz" required />
-                <input type="number" placeholder="     Quantidade de níveis do quizz" min="2" class="number-levels-quizz" required />
+            <form class="form-perguntas" novalidate>
+                
+                <input type="text" minlength="20" oninvalid="validarInput(this);" onchange=xixi(this) maxlength="65" placeholder="      Título do quizz" class="quizz-title" required />
+                <small class="hidden">O campo título do quizz não pode ser vazio e deve ter um número de caracteres entre 20 e 65</small>
+                
+                
+                <input type="url" oninvalid="validarInput(this);" placeholder="     URL da imagem do seu quizz" class="url-image-quizz" required />
+                <small class="hidden">O campo imagem do quizz deve ser uma URL válida</small>
+                
+                
+                <input type="number" oninvalid="validarInput(this);" placeholder="     Quantidade de perguntas do quizz" min="3" class="number-asks-quizz" required />
+                <small class="hidden">O campo quantidade de perguntas do quizz deve ter o valor mínimo de 3</small>
+                
+                
+                <input type="number" oninvalid="validarInput(this);" placeholder="     Quantidade de níveis do quizz" min="2" class="number-levels-quizz" required />
+                <small class="hidden">O campo quantidade de níveis do quizz deve ter o valor mínimo de 2</small>
+                
             </form>
             <a class="submit" onclick="submit()">Prosseguir pra criar perguntas</a>
             `;
@@ -309,6 +337,7 @@
             //A seguir, adiciona a lógica pertence àquela view
             if (route === "home")
             {
+              if(quizzesUsuario.length)
                 getQuizzesUsuario();
                 getQuizzes();
             }

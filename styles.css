@@ -335,7 +335,7 @@ form input[type="submit"]
 
 input:invalid
 {
-    background-color: pink;
+    background-color: #FFE9E9;;
 }
 
 .group
@@ -424,6 +424,32 @@ input:invalid
     z-index: 1;
 }
 
+small
+{
+    display: block;
+    width: 100%;
+    font-family: Roboto;
+    font-size: 16px;
+    line-height: 19px;
+    color: #EC362D;
+    margin-bottom: 10px;
+}
+
+.hidden
+{
+    display: none;
+}
+
+.loading-overlay
+{
+    position: fixed;
+    background-color: sandybrown;
+    height: 100%;
+    width: 100%;
+    top: 10px;
+    z-index: 1;
+    display: none;
+}
 
 /*  A SEGUIR COMEÇA O CSS DO PEDRO */
 
@@ -440,17 +466,14 @@ input:invalid
     position: relative;
 }
 
-.quizz-header div{
-   width: 100%;
-   height: 227px;
-   position: absolute;
-   background-color: black;
-   opacity: 0.6;
-   z-index: 2;
+.quizz-container li{
+   margin-top: 28px;
 }
 
+
+
 .quizz-header{
-   width: 100%;
+   width: 100vw;
    height: 227px;
    background: transparent;
    background-size: 100%;
@@ -461,6 +484,15 @@ input:invalid
    justify-content: center;
 }
 
+.quizz-header div{
+   width: 100%;
+   height: 227px;
+   position: absolute;
+   background-color: black;
+   opacity: 0.6;
+   z-index: 2;
+}
+
 
 .quizz-header h2{
    font-family: Roboto;
@@ -469,6 +501,7 @@ input:invalid
    line-height: 46px;
    color: #fff;
    z-index: 3;
+   margin-top: 0;
 }
 
 .question-container{
@@ -477,6 +510,7 @@ input:invalid
    margin-top: 42px;
    width: 759px;
 }
+
 
 .question-header{
    width: 100%;
@@ -617,3 +651,115 @@ line-height: 25px;
 .curtain{
    color: black;
 } 
+
+/* mobile */
+
+@media (max-width:1000px){
+
+.quizz-header{
+   width: 100vw;
+   height: 142px;
+}
+
+.quizz-header div{
+   width: 100vw;
+   height: 142px;
+
+}
+
+.quizz-header h2{
+   font-size: 19px;
+   line-height: 22.27px;
+}
+
+.question-container{
+   padding: 18px;
+   width: 100vw;
+}
+
+.question-header{
+   width: 100%;
+   height:89px;
+   margin-bottom: 12px;
+}
+
+.question-header h3{
+   font-size: 19px;
+   line-height: 22px;
+}
+
+.quizz-question{
+   width: 100%;
+   gap: 0 12px;
+}
+
+.answer-card{
+   width: 45%;
+   margin-bottom: 12px;
+
+}
+
+.answer-card img{
+   width: 100%;
+   height: auto;
+}
+
+.answer-card h3{
+   margin-top: 5px;
+   font-size: 13px;
+   line-height: 15px;
+}
+
+/* results */
+
+.results-container{
+   padding: 15px;
+   margin-top: 24px;
+   width: 100vw;
+}
+
+.results-header{
+   width: 100%;
+   height: 20%;
+   margin-bottom: 9px;
+}
+.results-header h3{
+   font-size: 19px;
+   line-height:22px;
+   color: #fff;
+}
+
+.results-box{
+   width: 100%;
+   flex-direction: column;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.results-box img{
+   width: 100%;
+   max-height: 255px;
+}
+
+.results-box h3{
+   width: 100%;
+   font-size: 17px;
+   line-height: 19px;
+
+}
+
+.btn-reiniciar{
+   width: 220px;
+   height: 44px;
+   font-size: 18px;
+   margin-bottom: 8px;
+   margin-top: 34px;
+}
+
+
+.btn-home{
+   font-size: 18px;
+   margin-bottom: 66px;
+}
+}
