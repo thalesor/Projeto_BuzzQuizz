@@ -25,7 +25,7 @@
        const Quizz = (title, image, id) =>
        {
            
-            let quizzBody = `<a href="${id}">
+            let quizzBody = `<a onclick=getQuizz(${id})>
             <li class="quizz">
             <div class="buttons">
             <div class="btn-edit-quizz"><ion-icon name="create-outline"></ion-icon></div>
