@@ -454,6 +454,7 @@
         let score = 0;
         let scrollToNext = 0;
 
+        //Função que permite trazer um quizz que nem esteja na lista de quizzes da API, um quizz antigo.
         function getQuizzInput()
         {
           let form = document.querySelector(".form-home");
