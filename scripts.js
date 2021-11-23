@@ -1,12 +1,14 @@
+      //Em primeiro lugar, nós tinhamos que definir o objeto no storage que ia guardar os quizzes do usuário
+          let quizzesUsuario;
+          if(!localStorage.getItem("quizzesUsuario"))
+          {
+              let quizzesUsuario = [];
+              localStorage.setItem("quizzesUsuario", JSON.stringify(quizzesUsuario));
+          }
+          else
+          quizzesUsuario = JSON.parse(localStorage.getItem("quizzesUsuario"));
+      //fim do storage
 
-    let quizzesUsuario;
-    if(!localStorage.getItem("quizzesUsuario"))
-    {
-        let quizzesUsuario = [];
-        localStorage.setItem("quizzesUsuario", JSON.stringify(quizzesUsuario));
-    }
-    else
-    quizzesUsuario = JSON.parse(localStorage.getItem("quizzesUsuario"));
 
        //Aqui ficam as variáveis globais que serão usadas nas funções
        let route = "home";
@@ -20,14 +22,14 @@
         questions: [],
         levels: []
        };
-
+       
        //Definição do componente quizz(visual)
        const Quizz = (title, image, id) =>
        {
            
-            let quizzBody = `<a onclick=getQuizz(${id})>
+            let quizzBody = `<a data-identifier="quizz-card" onclick=getQuizz(${id})>
             <li class="quizz">
-                <img src="${image}">
+                <img alt="${id}" src="${image}">
                 <span>${title}</span>
             </li>
         </a>`;
@@ -35,6 +37,7 @@
            return quizzBody;
        }
 
+       //Função que retorna os quizzes do usuário mas somente se esses estiverem na lista dos últimos quizzes da API
        const getQuizzesUsuario = () =>
        {   
            axios.get("https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes")
@@ -51,6 +54,7 @@
            }).finally(() => turnOverlay("remove"));
        }
 
+       //Função que retorna os últimos 50 quizzes(ou algo assim) da API, somente os que não são do usuário
         const getQuizzes = () =>
        {   
            axios.get("https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes")
@@ -71,10 +75,10 @@
        const renderPerguntaForm = (number) =>
         {
             let form =  `
-            <a class="collapsible">
+            <a data-identifier="expand" class="collapsible">
             <span>Pergunta ${number}</span><ion-icon name="create-outline">
             </a>
-            <form class="form-collapsible">
+            <form data-identifier="question" class="form-collapsible">
             <input oninvalid="validarInput(this);" type="text" minlength="20" placeholder="     Texto da pergunta" class="pergunta-texto" required />
             <small class="hidden">O campo texto da pergunta não pode ser vazio e deve ter um número de caracteres a partir de 20</small>
 
@@ -120,10 +124,10 @@
             campoAcerto = `<input oninvalid="validarInput(this);" type="number" placeholder="     % de acerto mínima" min="10" max="100" class="acerto-nivel" required />
             <small class="hidden">O campo da porcentagem de acerto do nível não pode ser vazio e deve ser a partir dos 10% de acerto</small>`;
               let form =  `
-              <a class="collapsible">
+              <a data-identifier="expand" class="collapsible">
               <span>Nível ${number}</span><ion-icon name="create-outline">
               </a>
-              <form class="form-collapsible">
+              <form data-identifier="level" class="form-collapsible">
               <input oninvalid="validarInput(this);" type="text" minlength="10" placeholder="     Título do nível" class="titulo-nivel" required />
               <small class="hidden">O campo título do nível não pode ser vazio e deve ter um número de caracteres a partir de 10</small>
 
@@ -141,6 +145,7 @@
                 container.insertAdjacentHTML("beforeend", form);
         }
 
+        //Função que reseta as variáveis globais de criação de quizz, caso dê erro na crição do quizz
         const resetQuizz = () =>
         {
             let quantidadePerguntasForm = 0;
@@ -154,6 +159,7 @@
             };
         }
 
+        //Função que guarda um quizz no storage
         const guardaStorage = (idQuizz) =>
         {
             quizzesUsuario = JSON.parse(localStorage.getItem("quizzesUsuario"));
@@ -161,6 +167,7 @@
             localStorage.setItem("quizzesUsuario", JSON.stringify(quizzesUsuario));
         }
        
+        //Função que adiciona mensagens de erro aos inputs
         const validarInput = (elemento) => 
         {
           elemento.nextElementSibling.classList.remove("hidden");
@@ -243,6 +250,7 @@
             }
         }
 
+        //Função que renderiza todo o html do site, baseado na variável global route
         const renderView = (route) => 
         {
             if(route === "home")
@@ -252,24 +260,31 @@
                 viewUsuario = `
                 <div class="flex">
                     <h1>Seus quizzes</h1>
-                    <a onclick='redirect("quizz");'><ion-icon name="add-circle"></ion-icon>
+                    <a data-identifier="create-quizz" onclick='redirect("quizz");'><ion-icon name="add-circle"></ion-icon>
                     </a>
                 </div>
-                <ul class="quizz-usuario"></ul>
+                <ul data-identifier="user-quizzes" class="quizz-usuario"></ul>
                 `;
                 else
                 viewUsuario = `
                 <div class="painel-usuario">
                     <span>Você não criou nenhum quizz ainda :(</span>
-                    <a onclick='redirect("quizz");'><p>Criar Quizz</p></a>
+                    <a data-identifier="create-quizz" onclick='redirect("quizz");'><p>Criar Quizz</p></a>
                 </div>
                 `;
 
                 return `
                 <div class="container-home">
+                <form class="form-home" novalidate>
+                  <div>
+                    <input type="number" placeholder="      ID do quizz que deseja buscar" oninvalid="validarInput(this);" min="0" class="idQUizzInput"  required />
+                    <small class="hidden">Para buscar um quizz, o campo não pode estar vazio</small>
+                  </div>
+                  <a onclick="getQuizzInput()">Buscar</a>
+                </form>
                 ${viewUsuario}
                 <h1>Todos os quizzes</h1>
-                <ul class="quizz-todos"></ul>
+                <ul data-identifier="general-quizzes" class="quizz-todos"></ul>
             </div>
                 `;
             }
@@ -278,7 +293,7 @@
             <h2>Comece pelo começo</h2>
             <form novalidate>
                 
-                <input type="text" minlength="20" oninvalid="validarInput(this);" onchange=xixi(this) maxlength="65" placeholder="      Título do quizz" class="quizz-title" required />
+                <input type="text" minlength="20" oninvalid="validarInput(this);" maxlength="65" placeholder="      Título do quizz" class="quizz-title" required />
                 <small class="hidden">O campo título do quizz não pode ser vazio e deve ter um número de caracteres entre 20 e 65</small>
                 
                 
@@ -320,7 +335,6 @@
             <a onclick=getQuizz(${quizzId}) class="btn-acessar-quizz">Acessar quizz</a>
             <a onclick='redirect("home");' class="btn-voltar-home">Voltar pra home</a>
             `;
-            //VIEW CRIADA PARA ADAPTAR O CODIGO DO PEDRO
             else if(route === "selectedQuizz")
             return `<div class="quizz-container">
           <div class="quizz-header">
@@ -331,12 +345,14 @@
         </div>`;
         }
 
+        //Função que direciona o usuário para outra página(view)
         const redirect = (routing) =>
         {
             route = `${routing}`;
             loadPage();
         }
 
+        //Função criada para mostrar que a tela está carregando
         const turnOverlay = (action) =>
         {
           let modal = document.querySelector(".loading-overlay");
@@ -346,17 +362,16 @@
           modal.classList.add("hidden");
         }
 
+        //FUnção criada para carregar a view e depois adicionar lógica à ela
         const loadPage = () =>
         {
+            enableScroll();
             turnOverlay("add");
-            if(route === "selectedQuizz")
-            document.body.classList.add("scroll-hidden");
-            else
-                document.body.classList.remove("scroll-hidden");
+            document.body.classList.remove("scroll-hidden");
 
             //Primeiro, carrega a view solicitada
             document.querySelector("main").innerHTML = renderView(route);
-            //A seguir, adiciona a lógica pertence àquela view
+            //A seguir, adiciona a lógica pertencente àquela view
             if (route === "home")
             {
               if(quizzesUsuario.length)
@@ -400,9 +415,10 @@
                     redirect("quizz");
                 }).finally(() => turnOverlay("remove"));
             }
-            //Função baseada no que o Pedro criou
             else if(route === "selectedQuizz")
             {
+              document.body.classList.add("scroll-hidden");
+              disableScroll();
                 axios
                 .get(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${quizzId}`)
                 .then((response) => {
@@ -430,7 +446,7 @@
         }
 
 
-        //A SEGUIR, CÓDIGO CRIADO PELO PEDRO
+        //A SEGUIR, VARÍAVEIS E FUNÇÕES DA TELA QUE RESOLVE UM QUIZZ
 
         let correctAnswers = 0;
         let numberOfQuestions = 0;
@@ -438,9 +454,17 @@
         let score = 0;
         let scrollToNext = 0;
 
-        
+        function getQuizzInput()
+        {
+          let form = document.querySelector(".form-home");
+            if (form.checkValidity()) 
+            {
+              let idQuizz = form.querySelector('.idQUizzInput').value;
+              getQuizz(idQuizz);
+            }
+        }
 
-       
+       //Função que pega todos os dados do quizz 
         function getQuizz(idQuizz) {
             correctAnswers = 0
                numberOfQuestions = 0
@@ -462,6 +486,7 @@
           return sourceArray;
         }
 
+        //Função que mostra o quizz selecionado na tela
         function renderQuizz(quizz) {
           let title = document.querySelector(".quizz-header h2");
           title.innerHTML = quizz.data.title;
@@ -506,6 +531,7 @@
           }
         }
 
+        //Função que verifica a resposta e scrolla a tela para outra pergunta
         function checkAnswer(answerCard) {
           if (answerCard.querySelector("h3").classList.contains("true")) {
             correctAnswers++;
@@ -544,6 +570,7 @@
           }
         }
 
+        //Função que exibe os resultados de um quizz na tela
         function quizzResults() {
           axios
             .get(`https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes/${quizzId}`)
@@ -581,6 +608,48 @@
               .querySelector(".results-container")
               .scrollIntoView({ behavior: "smooth" });
           }, 2000);
+        }
+
+
+        //Funções referentes ao scroll:
+        let keys = {37: 1, 38: 1, 39: 1, 40: 1};
+
+        function preventDefault(e) {
+          e.preventDefault();
+        }
+
+        function preventDefaultForScrollKeys(e) {
+          if (keys[e.keyCode]) {
+            preventDefault(e);
+            return false;
+          }
+        }
+
+        // modern Chrome requires { passive: false } when adding event
+        var supportsPassive = false;
+        try {
+          window.addEventListener("test", null, Object.defineProperty({}, 'passive', {
+            get: function () { supportsPassive = true; } 
+          }));
+        } catch(e) {}
+
+        var wheelOpt = supportsPassive ? { passive: false } : false;
+        var wheelEvent = 'onwheel' in document.createElement('div') ? 'wheel' : 'mousewheel';
+
+        // call this to Disable
+        function disableScroll() {
+          window.addEventListener('DOMMouseScroll', preventDefault, false); // older FF
+          window.addEventListener(wheelEvent, preventDefault, wheelOpt); // modern desktop
+          window.addEventListener('touchmove', preventDefault, wheelOpt); // mobile
+          window.addEventListener('keydown', preventDefaultForScrollKeys, false);
+        }
+
+        // call this to Enable
+        function enableScroll() {
+          window.removeEventListener('DOMMouseScroll', preventDefault, false);
+          window.removeEventListener(wheelEvent, preventDefault, wheelOpt); 
+          window.removeEventListener('touchmove', preventDefault, wheelOpt);
+          window.removeEventListener('keydown', preventDefaultForScrollKeys, false);
         }
 
 

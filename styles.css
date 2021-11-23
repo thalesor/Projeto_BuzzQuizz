@@ -26,6 +26,16 @@ button
     cursor: pointer;
 }
 
+button:hover
+{
+    opacity: 0.7;
+}
+
+a:hover
+{
+    opacity: 0.7;
+}
+
 main
 {
     background-color: #FFFFFF;
@@ -220,6 +230,11 @@ h2
     color: #FFFFFF;
 }
 
+.container-home .quizz-usuario
+{
+    margin-bottom: 48px;
+}
+
 .container-home .painel-usuario
 {
     height: 181px;
@@ -273,6 +288,40 @@ form
     margin-top: 12px;
     width: 600px;
     padding: 13px 20px 0px 16px;
+}
+
+.form-home
+{
+    display: flex;
+    width: 100%;
+    gap: 15px;
+    padding: 0;
+    margin: 0 !important;
+    margin-right: auto;
+
+}
+
+.form-home div
+{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.form-home a
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #EC362D;
+    border-radius: 15px;
+    border: none;
+    font-family: Roboto;
+    font-size: 14px;
+    color: #FFF5F4;
+    cursor: pointer;
+    height: 46px;
+    width: 80px;
 }
 
 form input
@@ -897,6 +946,11 @@ form
     margin-top: 13px;
     width: 100%;
     padding: 6px 10px 0px 8px;
+}
+
+.form-home
+{
+    align-items: center;
 }
 
 form h3
