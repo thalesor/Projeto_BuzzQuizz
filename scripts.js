@@ -27,10 +27,6 @@
            
             let quizzBody = `<a onclick=getQuizz(${id})>
             <li class="quizz">
-            <div class="buttons">
-            <div class="btn-edit-quizz"><ion-icon name="create-outline"></ion-icon></div>
-            <div class="btn-remove-quizz"><ion-icon name="trash-outline"></ion-icon></div>
-        </div>
                 <img src="${image}">
                 <span>${title}</span>
             </li>
@@ -114,24 +110,33 @@
         //Função que renderiza um formulário de nível
         const renderNivelForm = (number) =>
         {
-            let form =  `
-            <a class="collapsible">
-            <span>Nível ${number}</span><ion-icon name="create-outline">
-            </a>
-            <form class="form-collapsible">
-            <input oninvalid="validarInput(this);" type="text" minlength="10" placeholder="     Título do nível" class="titulo-nivel" required />
-            <small class="hidden">O campo título do nível não pode ser vazio e deve ter um número de caracteres a partir de 10</small>
+            let campoAcerto;
+            if(number === 1)
+            {
+              campoAcerto = `<input oninvalid="validarInput(this);" type="number" placeholder="     % de acerto mínima" min="0" max="0" class="acerto-nivel" required />
+              <small class="hidden">O campo da porcentagem de acerto do primeiro nível deve ser obrigatoriamente a partir dos 0% de acerto</small>`;
+            }
+            else 
+            campoAcerto = `<input oninvalid="validarInput(this);" type="number" placeholder="     % de acerto mínima" min="10" max="100" class="acerto-nivel" required />
+            <small class="hidden">O campo da porcentagem de acerto do nível não pode ser vazio e deve ser a partir dos 10% de acerto</small>`;
+              let form =  `
+              <a class="collapsible">
+              <span>Nível ${number}</span><ion-icon name="create-outline">
+              </a>
+              <form class="form-collapsible">
+              <input oninvalid="validarInput(this);" type="text" minlength="10" placeholder="     Título do nível" class="titulo-nivel" required />
+              <small class="hidden">O campo título do nível não pode ser vazio e deve ter um número de caracteres a partir de 10</small>
 
-            <input oninvalid="validarInput(this);" type="number" placeholder="     % de acerto mínima" min="0" max="100" class="acerto-nivel" required />
-            <small class="hidden">O campo da porcentagem de acerto mínima não pode ser vazio</small>
+              ${campoAcerto}
 
-            <input oninvalid="validarInput(this);" type="url" placeholder="     URL da imagem do seu quizz" class="url-imagem-nivel" required />
-            <small class="hidden">O campo da imagem do nível deve ser uma URL válida</small>
+              <input oninvalid="validarInput(this);" type="url" placeholder="     URL da imagem do seu quizz" class="url-imagem-nivel" required />
+              <small class="hidden">O campo da imagem do nível deve ser uma URL válida</small>
 
-            <input oninvalid="validarInput(this);" type="text" minlength="30" placeholder="     Descrição do nível" class="descricao-nivel" required />
-            <small class="hidden">O campo descrição do nível não pode ser vazio e deve ter um número de caracteres a partir de 30</small>
-            </div>
-            </form>`;
+              <input oninvalid="validarInput(this);" type="text" minlength="30" placeholder="     Descrição do nível" class="descricao-nivel" required />
+              <small class="hidden">O campo descrição do nível não pode ser vazio e deve ter um número de caracteres a partir de 30</small>
+              </div>
+              </form>`;
+
                 let container =  document.querySelector(".container-niveis");
                 container.insertAdjacentHTML("beforeend", form);
         }
@@ -362,13 +367,13 @@
             turnOverlay("remove");
             else if(route === "perguntas")
             {
-                for(let i = 0; i < quantidadePerguntasForm; i++)
+                for(let i = 1; i <= quantidadePerguntasForm; i++)
                 renderPerguntaForm(i); 
                 turnOverlay("remove");
             }
             else if(route === "niveis")
             {
-                for(let i = 0; i < quantidadeNiveisForm; i++)
+                for(let i = 1; i <= quantidadeNiveisForm; i++)
                 renderNivelForm(i);
                 turnOverlay("remove");
             }
@@ -487,6 +492,7 @@
           let quizzQuestion = document.querySelectorAll(".quizz-question");
 
           for (i = 0; i < questions.length; i++) {
+            quizzContainer.querySelector("li").scrollIntoView({behavior: "smooth", block:"center", inline:"end"})
             let answers = questions[i].answers;
             shuffle(answers);
 

@@ -21,15 +21,20 @@ a{
     cursor: pointer;
 }
 
+button
+{
+    cursor: pointer;
+}
+
 main
 {
     background-color: #FFFFFF;
     min-height: 100vh;
     padding-bottom: 69px;
+    padding-inline: 18px;
     display: flex;
     align-items: center;
     flex-direction: column;
-    width: 100vw;
 }
 
 header 
@@ -90,6 +95,7 @@ h2
     font-weight: bold;
     font-size: 20px;
     line-height: 23px;
+    margin-right: auto;
     color: #000000;
 }
 
@@ -101,6 +107,7 @@ h2
 .flex
 {
     display: flex;
+    margin-right: auto;
     align-items: center;
     gap: 18px;
 }
@@ -501,7 +508,6 @@ small
 
 .quizz-container
 {
-   background: #E5E5E5;
     padding-top: 69px;
     display: flex;
     flex-direction: column;
@@ -750,6 +756,13 @@ small
       flex-direction: column;
       align-items: center;
       justify-content: center;
+  }
+
+  .flex
+  {
+      width: 100%;
+      gap: 0px;
+      justify-content: space-between;
   }
   
   .container-home .painel-usuario
